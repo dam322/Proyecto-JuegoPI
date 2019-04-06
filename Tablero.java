@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -28,11 +29,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     private static JLabel etiqueta2;
     private static JLabel etiqueta3;
     private static JLabel etiqueta4;
+    private static TextArea textAreaResults;
     private static Timer temporizador;
+    Scores scores = new Scores();
+    ScoreFile scoresFile = new ScoreFile();
     private static ManejaEjemploTimer manejador;
     private int vidas = 2;
     private int totalEventos;
-    private final Menú menu;
+    public final Menú menu;
     
     
     boolean derecha = true;
@@ -92,11 +96,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             JOptionPane.showMessageDialog(this, "Perdiste.");
             int opcion = JOptionPane.showConfirmDialog(this, "¿Desea iniciar un nuevo juego?");
             if (opcion == JOptionPane.YES_NO_OPTION) {
-
+                highScore(menu.getNombre(), menu.getPuntuacion());
+                menu.setPuntuacion(0);
+                etiqueta4.setText("Puntuacion: 0");
                 CrearBloques();
                 vidas = 3;
                 run();
             } else {
+                highScore(menu.getNombre(), menu.getPuntuacion());
                 System.exit(0);
             }
         }
@@ -136,6 +143,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         derecha = false;
                         abajo = false;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(-1, -1);
                     } else if (((bola.getX() == bloques[i][j].getX() + ANCHO_LADRILLO) || (bola.getX() == bloques[i][j].getX() + ANCHO_LADRILLO + 1)) && (bola.getY() <= bloques[i][j].getY() + ALTO_LADRILLO) && (bola.getY() + RADIO_BOLA > bloques[i][j].getY())) {
                         abajo = true;
@@ -143,6 +154,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         arriba = false;
                         izquierda = false;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(1, 1);
                     }
                 } //Segunda parte 
@@ -153,6 +168,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         derecha = true;
                         abajo = false;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(1, -1);
                     } else if (((bola.getX() + RADIO_BOLA == bloques[i][j].getX()) || (bola.getX() + RADIO_BOLA - 1 == bloques[i][j].getX())) && (bola.getY() <= bloques[i][j].getY() + ALTO_LADRILLO) && (bola.getY() + RADIO_BOLA > bloques[i][j].getY())) {
                         abajo = true;
@@ -160,6 +179,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         arriba = false;
                         izquierda = true;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(-1, 1);
                     }
                 } // Tercera parte
@@ -171,6 +194,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         derecha = true;
                         abajo = true;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(1, 1);
                     } //No modificar hitbox   
                     else if (((bola.getX() + RADIO_BOLA == bloques[i][j].getX()) || (bola.getX() + RADIO_BOLA - 1 == bloques[i][j].getX())) && (bola.getY() <= bloques[i][j].getY() + ALTO_LADRILLO) && (bola.getY() + RADIO_BOLA > bloques[i][j].getY())) {
@@ -179,6 +206,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         arriba = true;
                         izquierda = true;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(-1, -1);
 
                     }
@@ -190,6 +221,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         derecha = false;
                         abajo = true;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(-1, 1);
                     } else if (((bola.getX() == bloques[i][j].getX() + ANCHO_LADRILLO) || (bola.getX() == bloques[i][j].getX() + ANCHO_LADRILLO - 1)) && (bola.getY() <= bloques[i][j].getY() + ALTO_LADRILLO) && (bola.getY() + RADIO_BOLA > bloques[i][j].getY())) {
                         abajo = false;
@@ -197,6 +232,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         arriba = true;
                         izquierda = false;
                         bloques[i][j].golpe();
+                        if(bloques[i][j].getDureza() == 0){
+                            menu.sumarPuntuacion();
+                            etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
+                        }
                         bola.setDirecciones(1, -1);
 
                     }
@@ -305,6 +344,8 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
         }
     }
+    
+    
 
     //Constructor
     public Tablero(int ancho, int alto) {
@@ -328,12 +369,18 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         etiqueta3.setBounds(1142, 50, 1300, 60);
         etiqueta4 = new JLabel("Puntuacion: 0");
         etiqueta4.setBounds(1072, 100, 1182, 120);
+        textAreaResults = new TextArea();
+        textAreaResults.setBounds(1062, 385, 1355, 500);
+        textAreaResults.setEditable(false);
+        scoresFile.load(scores);
+        textAreaResults.setText(scores.toString());
         manejador = new ManejaEjemploTimer();
         temporizador = new Timer(1000, manejador);
         super.add(etiqueta);
         super.add(etiqueta2);
         super.add(etiqueta3);
         super.add(etiqueta4);
+        super.add(textAreaResults);
         temporizador.start();
         plataforma = new Plataforma(240, 650, ANCHO_PLATAFORMA, ALTO_PLATAFORMA);
         bola = new Bola(290, 650 - RADIO_BOLA, RADIO_BOLA, RADIO_BOLA);
@@ -341,6 +388,30 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         game = new Thread(this);
         game.start();
 
+    }
+    
+    
+    public void highScore(String playerName, int value){
+        // Creación de objetos para almacenar máximas puntuaciones
+        
+        
+        // Cargar la lista inicial de máximas puntuaciones
+        scoresFile.load(scores);
+        // Mostrar la lista inicial de máximas puntuaciones
+        textAreaResults.setText(scores.toString());
+
+        
+            // Recoger datos de nueva puntuación desde la ventana
+            
+            // Crear una nueva puntuación
+            Jugador score = new Jugador(playerName, value);
+            // Añadirla a la lista de puntuaciones
+            scores.addScore(score);
+            
+            // Mostrar la lista de máximas puntuaciones
+            textAreaResults.setText(scores.toString());
+            // Almacenar la lista de máximas puntuaciones
+            scoresFile.save(scores);
     }
 
     @Override //Pintor
@@ -354,7 +425,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         g.drawLine(1356, 0, 1356, 700);
         g.drawLine(1062, 700, 1356, 700);
         g.drawLine(1062, 350, 1356, 350);
-       
+        
         Graphics2D g2 = (Graphics2D) g;
 
         // Define rendering hint, font name, font style and font size
@@ -386,18 +457,13 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     }
 
     @Override
-    public void run() {
-        for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
-            for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
-                if (bloques[i][j].getDureza() == 0) {
-                    menu.sumarPuntuacion();
-                    etiqueta4.setText("Puntuacion: "+Integer.toString(menu.getPuntuacion()));
-                }}}
+    public void run() { 
         while (true) {
             if (bola.contador == 2000) {
                 moverBloques();
                 bola.contador = 0;
             }
+            
             verificarBloque();
             verificarPlataforma();
             bola.mover();
