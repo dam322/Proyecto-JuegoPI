@@ -6,6 +6,7 @@ import java.util.Random;
 public class Bloques extends Estructura {
     private int dureza=0;
     Random rand = new Random();
+    int destroy = 0;
     
     public Bloques(int x, int y, int ancho, int alto) {
         super(x, y, ancho, alto);
@@ -16,6 +17,7 @@ public class Bloques extends Estructura {
     public void draw(Graphics g){
         switch (dureza) {
             case 0:
+                
                 break;
             case 1:
                 g.drawImage(LADRILLO2, x, y,ancho,alto,null);
@@ -36,7 +38,10 @@ public class Bloques extends Estructura {
 
     public void golpe(){
         dureza--;
+        
     }
+    
+    
 
     public int getDureza() {
         return dureza;

@@ -17,6 +17,10 @@ public class Menú {
     public void sumarPuntuacion() {
         puntuacion = puntuacion+100;
     }
+    
+    public void setPuntuacion(int puntuacion) {
+        this.puntuacion = puntuacion;
+    }
 
     public String getNombre() {
         return nombre;

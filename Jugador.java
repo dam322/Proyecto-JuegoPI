@@ -1,15 +1,16 @@
 package bricker.breaker;
 
-public class Jugador {
+import java.io.Serializable;
+
+public class Jugador implements Comparable<Jugador>, Serializable{
 
     private String nombre;
     private int puntaje;
     private int vidas;
 
-    public Jugador(String nombre, int puntaje, int vidas) {
+    public Jugador(String nombre, int puntaje) {
         this.nombre = nombre;
         this.puntaje = puntaje;
-        this.vidas = vidas;
     }
 
     public String getNombre() {
@@ -35,5 +36,18 @@ public class Jugador {
     public void setVidas(int vidas) {
         this.vidas = vidas;
     }
+
+    @Override
+    public int compareTo(Jugador o) {
+        if (this.puntaje < o.puntaje) {
+            return 1;
+        } else if (this.puntaje > o.puntaje) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+    
+    
 
 }
