@@ -37,6 +37,7 @@ public class Bloques extends Estructura {
 
 
     public void golpe(){
+        Sonidos sound = new Sonidos("golpe");
         dureza--;
         
     }
