@@ -28,7 +28,6 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     private static JLabel etiqueta2;
     private static JLabel etiqueta3;
     private static JLabel etiqueta4;
-    private static JLabel etiqueta5;
     private static Timer temporizador;
     private static ManejaEjemploTimer manejador;
     private int vidas = 2;
