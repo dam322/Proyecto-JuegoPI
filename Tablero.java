@@ -354,14 +354,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         g.drawLine(1356, 0, 1356, 700);
         g.drawLine(1062, 700, 1356, 700);
         g.drawLine(1062, 350, 1356, 350);
-        
-        
-        
-        
-        
-        
-        
-        
+       
         Graphics2D g2 = (Graphics2D) g;
 
         // Define rendering hint, font name, font style and font size
