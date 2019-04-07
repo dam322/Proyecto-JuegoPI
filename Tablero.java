@@ -95,32 +95,29 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             izquierda = false;
             abajo = false;
             vidas--;
-            vida.setText("Vidas: "+vidas);
+            vida.setText("Vidas: " + vidas);
 
         } else {
-                temporizador.stop();
-                JOptionPane.showMessageDialog(this, "Perdiste.");
-                int opcion = JOptionPane.showConfirmDialog(this, "¿Desea iniciar un nuevo juego?");
-                
-                if (opcion == JOptionPane.YES_NO_OPTION) {
-                    highScore(menu.getNombre(), menu.getPuntuacion());
-                    menu.setPuntuacion(0);
-                    puntuacion.setText("Puntuacion: 0");
-                    tiempo.setText("Tiempo : 0");
-                    CrearBloques();
-                    vidas = 3;
-                    totalEventos = 0;
-                    temporizador.restart();
-                    run();
-                } else {
-                    highScore(menu.getNombre(), menu.getPuntuacion());
-                    System.exit(0);
-                }
+            temporizador.stop();
+            JOptionPane.showMessageDialog(this, "Perdiste.");
+            int opcion = JOptionPane.showConfirmDialog(this, "¿Desea iniciar un nuevo juego?");
+
+            if (opcion == JOptionPane.YES_NO_OPTION) {
+                highScore(menu.getNombre(), menu.getPuntuacion());
+                menu.setPuntuacion(0);
+                puntuacion.setText("Puntuacion: 0");
+                tiempo.setText("Tiempo : 0");
+                CrearBloques();
+                vidas = 3;
+                totalEventos = 0;
+                temporizador.restart();
+                run();
+            } else {
+                highScore(menu.getNombre(), menu.getPuntuacion());
+                System.exit(0);
             }
-        
-        
-                
-        
+        }
+
     }
 
     public void moverBloques() {
@@ -462,14 +459,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         g2.setPaint(Color.ORANGE);
 
         // Draw String
-        g2.drawString("LOLSITO", 1105, 50);
+        g2.drawString("CFMR", 1105, 50);
         // Define rendering hint, font name, font style and font size
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setFont(new Font("Segoe Script", Font.BOLD + Font.ITALIC, 20));
         g2.setPaint(Color.ORANGE);
 
         // Draw String
-        g2.drawString("MEJORES DO MUNDO", 1062, 380);
+        g2.drawString("HIGHSCORES", 1062, 380);
 
         plataforma.draw(g);
         for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
@@ -545,12 +542,12 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         public void actionPerformed(ActionEvent eventoAccion) {
             totalEventos++;
             tiempo.setText("Tiempo: " + totalEventos);
-            if(totalEventos == 300){
+            if (totalEventos == 300) {
                 stop();
                 temporizador.stop();
                 JOptionPane.showMessageDialog(null, "Se termino el tiempo");
                 int opcion = JOptionPane.showConfirmDialog(null, "¿Desea iniciar un nuevo juego?");
-                
+
                 if (opcion == JOptionPane.YES_NO_OPTION) {
                     highScore(menu.getNombre(), menu.getPuntuacion());
                     menu.setPuntuacion(0);
@@ -561,12 +558,12 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                     vidas = 3;
                     temporizador.restart();
                     start();
-                    
+
                 } else {
                     highScore(menu.getNombre(), menu.getPuntuacion());
                     System.exit(0);
                 }
-        }
+            }
 
         }
     }
