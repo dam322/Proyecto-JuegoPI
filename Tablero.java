@@ -385,7 +385,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         addMouseMotionListener(new EscuchaMouse());
         this.addKeyListener(new BoardListener());
         setFocusable(true);
-        CrearBloques();
+        
+        
+        Personalizable();
+        //CrearBloques();
+        
+        
+        
+        
         tiempo = new JLabel("Tiempo: 0");
         tiempo.setBounds(1072, 80, 1172, 90);
         nombreJugador = new JLabel("Jugador: ");
@@ -442,6 +449,17 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     @Override //Pintor
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+                switch (menu.getNivel()) {
+            case 1:
+                g.drawImage(FONDO1, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
+                break;
+            case 2:
+                g.drawImage(FONDO2, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
+                break;
+            default:
+                g.drawImage(FONDO3, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
+                break;
+        }
         g.drawImage(FONDO, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
         bola.draw(g);
         g.drawImage(INFORMACION, 1063, 0, 1360, 700, null);
@@ -484,6 +502,18 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     @Override
     public void run() {
         while (true) {
+            
+            if (IsComplete(bloques)) {
+                menu.siguienteNivel();
+                CrearBloques();
+            }
+            for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
+                for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
+                    if (bloques[i][j].getDureza() <= 0) {
+
+                    }
+                }
+            
             if (bola.contador == 2000) {
                 moverBloques();
                 bola.contador = 0;
@@ -567,4 +597,64 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
         }
     }
+    
+    
+     public void Personalizable() {
+        String nombre;
+        nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo") + ".txt";
+
+        if (!(new File(nombre)).exists()) {
+            System.out.println("No he encontrado " + nombre);
+            return;
+        }
+
+        System.out.println(
+                "Leyendo fichero de texto...");
+        try {
+            BufferedReader ficheroEntrada = new BufferedReader(new FileReader(new File(nombre)));
+            String linea = null;
+
+            int X;
+            int Y = 25;
+            for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
+                Y = Y + 28;
+                X = 50;
+                linea = ficheroEntrada.readLine();
+                for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
+                    bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO);
+                    bloques[i][j].SetDureza(linea.charAt(j) - '0');
+                    X = X + 98;
+                    //System.out.println( linea.charAt(j)- '0');
+                }
+
+            }
+            ficheroEntrada.close();
+        } catch (IOException errorDeFichero) {
+            System.out.println(
+                    "Ha habido problemas: "
+                    + errorDeFichero.getMessage());
+
+        }
+    }
+
+}
+
+    
+    
+      public boolean IsComplete(Bloques[][] bloques) {
+
+        for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
+            for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
+                if (bloques[i][j].getDureza() > 0 && bloques[i][j].getDureza() <   4 ) {
+
+                    return false;
+                }
+            }
+
+        }
+        return true;
+    }
+    
+    
+    
 }
