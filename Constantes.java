@@ -17,6 +17,7 @@ public interface Constantes {
     public static final Image LADRILLO3 = new ImageIcon("piedra.png").getImage();
     public static final Image LADRILLO2 = new ImageIcon("tierra.png").getImage();
     public static final Image LADRILLO1 = new ImageIcon("rocoso.png").getImage();
+    public static final Image BRONCE = new ImageIcon("indestructible.png").getImage();
     
     //Medidas                              98 &  28 opcional
     public static final int ANCHO_LADRILLO = 90;
