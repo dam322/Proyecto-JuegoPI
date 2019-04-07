@@ -12,7 +12,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -460,7 +464,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 g.drawImage(FONDO3, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
                 break;
         }
-        g.drawImage(FONDO, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
+        
         bola.draw(g);
         g.drawImage(INFORMACION, 1063, 0, 1360, 700, null);
         g.drawLine(1062, 0, 1062, 700);
@@ -529,7 +533,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             repaint();
         }
 
-    }
+    }}
 
     private class EscuchaMouse implements MouseMotionListener {
 
@@ -637,7 +641,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         }
     }
 
-}
+
 
     
     

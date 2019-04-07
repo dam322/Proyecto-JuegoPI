@@ -28,8 +28,9 @@ public interface Constantes {
     public static final int ANCHO_PLATAFORMA = 120;
     public static final int ALTO_PLATAFORMA= 20;
     
-  
-    public static final Image FONDO = new ImageIcon("fondo.jpg").getImage();
+    public static final Image FONDO1 = new ImageIcon("FondoNive1.jpg").getImage();
+    public static final Image FONDO2 = new ImageIcon("FondoNive2.jpg").getImage();
+    public static final Image FONDO3 = new ImageIcon("FondoNive3.jpg").getImage();
    // public static final Image PLATAFORMA = new ImageIcon("troncazo.png").getImage();
     public static final Image PLATAFORMA = new ImageIcon("barra.jpg").getImage();
     public static final Image INFORMACION = new ImageIcon("fondoverde.jpg").getImage();
