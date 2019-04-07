@@ -389,14 +389,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         addMouseMotionListener(new EscuchaMouse());
         this.addKeyListener(new BoardListener());
         setFocusable(true);
-        
-        
+
         Personalizable();
         //CrearBloques();
-        
-        
-        
-        
+
         tiempo = new JLabel("Tiempo: 0");
         tiempo.setBounds(1072, 80, 1172, 90);
         nombreJugador = new JLabel("Jugador: ");
@@ -453,7 +449,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     @Override //Pintor
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-                switch (menu.getNivel()) {
+        switch (menu.getNivel()) {
             case 1:
                 g.drawImage(FONDO1, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
                 break;
@@ -464,7 +460,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 g.drawImage(FONDO3, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
                 break;
         }
-        
+
         bola.draw(g);
         g.drawImage(INFORMACION, 1063, 0, 1360, 700, null);
         g.drawLine(1062, 0, 1062, 700);
@@ -506,7 +502,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     @Override
     public void run() {
         while (true) {
-            
+
             if (IsComplete(bloques)) {
                 menu.siguienteNivel();
                 CrearBloques();
@@ -517,23 +513,24 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
                     }
                 }
-            
-            if (bola.contador == 2000) {
-                moverBloques();
-                bola.contador = 0;
+
+                if (bola.contador == 2000) {
+                    moverBloques();
+                    bola.contador = 0;
+                }
+
+                verificarBloque();
+                try {
+                    verificarPlataforma();
+                } catch (FileNotFoundException | JavaLayerException ex) {
+                    Logger.getLogger(Tablero.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                bola.mover();
+                repaint();
             }
 
-            verificarBloque();
-            try {
-                verificarPlataforma();
-            } catch (FileNotFoundException | JavaLayerException ex) {
-                Logger.getLogger(Tablero.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            bola.mover();
-            repaint();
         }
-
-    }}
+    }
 
     private class EscuchaMouse implements MouseMotionListener {
 
@@ -601,9 +598,8 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
         }
     }
-    
-    
-     public void Personalizable() {
+
+    public void Personalizable() {
         String nombre;
         nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo") + ".txt";
 
@@ -641,15 +637,11 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         }
     }
 
-
-
-    
-    
-      public boolean IsComplete(Bloques[][] bloques) {
+    public boolean IsComplete(Bloques[][] bloques) {
 
         for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
             for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
-                if (bloques[i][j].getDureza() > 0 && bloques[i][j].getDureza() <   4 ) {
+                if (bloques[i][j].getDureza() > 0 && bloques[i][j].getDureza() < 4) {
 
                     return false;
                 }
@@ -658,7 +650,5 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         }
         return true;
     }
-    
-    
-    
+
 }
