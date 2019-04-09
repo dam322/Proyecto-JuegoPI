@@ -30,6 +30,10 @@ public class Menú {
         this.nombre = nombre; 
     }
 
+    public void setNivel(int nivel){
+        this.nivel = nivel;
+    }
+    
     public int getNivel() {
         return nivel;
     }

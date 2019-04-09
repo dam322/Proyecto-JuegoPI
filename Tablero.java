@@ -91,7 +91,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             X = 50;
             for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
                 Random rand = new Random();
-                int itemType = rand.nextInt(11);
+                int itemType = rand.nextInt(3) + 1;
                 bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO, itemType);
                 X = X + 98;
             }
@@ -130,7 +130,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     public void recolocar() {
 
         if (vidas != 0) {
-            
+
             JOptionPane.showMessageDialog(null, "¿Listo?");
             bola.setY(600);
             bola.setX(ANCHO_PANTALLA / 2);
@@ -141,7 +141,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             derecha = true;
             izquierda = false;
             abajo = false;
-            
+
             vidas--;
             vida.setText("Vidas: " + vidas);
 
@@ -158,6 +158,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 CrearBloques();
                 vidas = 3;
                 totalEventos = 0;
+                menu.setNivel(1);
                 temporizador.restart();
                 run();
             } else {
@@ -374,7 +375,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 abajo = true;
                 arriba = false;
                 bola.setDirecciones(-1, 1);
-                sound = new Sonidos("hacha");
+                sound = new Sonidos("golpePelota");
 
             }
         } else if (derecha && arriba) {
@@ -384,14 +385,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 derecha = true;
                 izquierda = false;
                 bola.setDirecciones(1, 1);
-                sound = new Sonidos("hacha");
+                sound = new Sonidos("golpePelota");
             } else if (bola.getX() + RADIO_BOLA >= ANCHO_PANTALLA) {
                 arriba = true;
                 izquierda = true;
                 derecha = false;
                 abajo = false;
                 bola.setDirecciones(-1, -1);
-                sound = new Sonidos("hacha");
+                sound = new Sonidos("golpePelota");
             }
         } else if (izquierda && arriba) {
             if (bola.getY() <= 0) {
@@ -400,14 +401,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 abajo = true;
                 arriba = false;
                 bola.setDirecciones(-1, 1);
-                sound = new Sonidos("hacha");
+                sound = new Sonidos("golpePelota");
             } else if (bola.getX() <= 0) {
                 derecha = true;
                 izquierda = false;
                 arriba = true;
                 abajo = false;
                 bola.setDirecciones(1, -1);
-                sound = new Sonidos("hacha");
+                sound = new Sonidos("golpePelota");
             }
         } else if (izquierda && abajo) {
             if (bola.getX() <= 0) {
@@ -416,7 +417,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 arriba = false;
                 abajo = true;
                 bola.setDirecciones(1, 1);
-                sound = new Sonidos("hacha");
+                sound = new Sonidos("golpePelota");
             }
 
         }
@@ -428,14 +429,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         menu = new Menú();
 
         JOptionPane.showMessageDialog(null, "¡Bienvenido a Destructor!\n", "Destructor", 1);
-        JOptionPane.showMessageDialog(null, "Instrucciones:\n- Inicias el movimiento de la bola con un click derecho y puedes mover la barra solo con el mouse\n"
+        JOptionPane.showMessageDialog(null, "Instrucciones:\n- Inicias el movimiento de la bola con un click izquierdo y puedes mover la barra solo con el mouse\n"
                 + "- Cada bloque que destruyas te dara 100 puntos\n- Cada nivel tiene un tiempo maximo de 300 segundos\n"
                 + "- Puedes elegir entre jugar los niveles pre-establecidos o elegir un nivel personalizado(es un archivo de "
                 + "texto que se encuentraen la carpeta base de este proyecto)\n"
                 + "- Puedes pausar el juego con la tecla 'ESC' y quitar la puasa con la barra espaciadora\n"
-                + "- Se tienen dos poderes: un caño que dispara multiples misiles por unos segundos al presionar la tecla 'S' y un iman que pega la bola a la barra para que puedas apuntar donde quieras", "Destructor", 1);
+                + "- Se tienen dos poderes: un caño que dispara multiples misiles por unos segundos al presionar la tecla 'S' y un iman que pega la bola a la barra para que puedas apuntar donde quieras, sueltas la bola con click izquierdo", "Destructor", 1);
         menu.setNombre(JOptionPane.showInputDialog(null, "Por favor digite su nombre: ", "Destructor", 1));
-        
+
         super.setSize(ancho, alto);
         super.setLayout(null);
         addMouseListener(new EscuchaMouse());
@@ -447,13 +448,13 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         if (op == JOptionPane.YES_NO_OPTION) {
             Personalizable();
 
-        } else{
-            if(op == JOptionPane.NO_OPTION){
+        } else {
+            if (op == JOptionPane.NO_OPTION) {
                 CrearBloques();
-            }else{
+            } else {
                 System.exit(0);
             }
-            
+
         }
 
         tiempo = new JLabel("Tiempo: 0");
@@ -505,7 +506,6 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         scoresFile.load(scores);
         // Mostrar la lista inicial de máximas puntuaciones
         textAreaResults.setText(scores.toString());
-        
 
         // Recoger datos de nueva puntuación desde la ventana
         // Crear una nueva puntuación
@@ -515,7 +515,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
         // Mostrar la lista de máximas puntuaciones
         textAreaResults.setText(scores.toString() + "\n");
-        
+
         // Almacenar la lista de máximas puntuaciones
         scoresFile.save(scores);
     }
@@ -547,7 +547,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             case 2:
                 g.drawImage(FONDO2, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
                 g.drawImage(INFORMACION2, 1063, 0, 1360, 700, null);
-                
+
                 tiempo.setForeground(Color.WHITE);
                 nombreJugador.setForeground(Color.WHITE);
                 nombre2.setForeground(Color.white);
@@ -569,7 +569,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
                 // Draw String
                 g2.drawString("HIGHSCORES", 1062, 380);
-                
+
                 break;
             default:
                 g.drawImage(FONDO3, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
@@ -641,19 +641,36 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         }
 
     }
-    
-    
+
     @Override
     public void run() {
         while (true) {
 
             if (IsComplete(bloques)) {
                 menu.siguienteNivel();
-                velocidad --;
+                velocidad--;
                 if (menu.getNivel() > 3) {
                     temporizador.stop();
                     JOptionPane.showMessageDialog(null, "Felicidades ha ganado los tres niveles de este juego", "Destructor", 1);
-                    System.exit(0);
+
+                    
+                    int opcion = JOptionPane.showConfirmDialog(this, "¿Desea iniciar un nuevo juego?");
+
+                    if (opcion == JOptionPane.YES_NO_OPTION) {
+                        highScore(menu.getNombre(), menu.getPuntuacion());
+                        menu.setPuntuacion(0);
+                        puntuacion.setText("Puntuacion: 0");
+                        tiempo.setText("Tiempo : 0");
+                        CrearBloques();
+                        vidas = 3;
+                        totalEventos = 0;
+                        menu.setNivel(1);
+                        temporizador.restart();
+                        run();
+                    } else {
+                        highScore(menu.getNombre(), menu.getPuntuacion());
+                        System.exit(0);
+                    }
 
                 }
                 temporizador.stop();
@@ -706,12 +723,10 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         if (bloques[i][j].getDureza() != 0) {
                             bloques[i][j].golpe();
                             disparos.remove(k);
-                        } else
-                            if(bloques[i][j].getDureza()==0){
-                                menu.sumarPuntuacion();
-                                puntuacion.setText("Puntuacion: "+menu.getPuntuacion());
-                            }else
-                            if (disparoTemp.getY() < 0) {
+                        } else if (bloques[i][j].getDureza() == 0) {
+                            menu.sumarPuntuacion();
+                            puntuacion.setText("Puntuacion: " + menu.getPuntuacion());
+                        } else if (disparoTemp.getY() < 0) {
                             disparos.remove(k);
                         }
                     }
@@ -817,7 +832,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 if (tempoDisparo == 2) {
                     System.out.println(tempoDisparo);
                     shoting = false;
-                    tempoDisparo=0;
+                    tempoDisparo = 0;
                 }
             }
         }
@@ -826,7 +841,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     public void Personalizable() {
         String nombre;
         nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo", "Destructor", 1) + ".txt";
-        
+
         if (!(new File(nombre)).exists()) {
             System.out.println("No he encontrado " + nombre);
             JOptionPane.showMessageDialog(null, "No se ha encontrado el archivo, por favor creelo en la carpeta base de este proyecto o escriba bien el nombre", "Erro", JOptionPane.WARNING_MESSAGE);
