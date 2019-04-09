@@ -37,7 +37,7 @@ public class Sonidos implements Runnable{
             System.out.println("2.try");
             FileInputStream fis;
             Player player;
-            fis = new FileInputStream("D:\\UNIVERSIDAD\\SEMESTRE III\\Programacion Interactiva\\Proyecto\\Brick\\Sonido\\"+tipoSonido+".mp3");
+            fis = new FileInputStream(tipoSonido+".mp3");
             System.out.println("Audio " + fis.toString());
             BufferedInputStream bis = new BufferedInputStream(fis);
             player = new Player(bis);
