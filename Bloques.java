@@ -1,17 +1,29 @@
 package bricker.breaker;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;
 
 public class Bloques extends Estructura {
-    private int dureza=0;
+
+    int dureza;
+    public Item item;
+    Color itemColor;
     Random rand = new Random();
-    int destroy = 0;
-    
-    public Bloques(int x, int y, int ancho, int alto) {
+
+    public Bloques(int x, int y, int ancho, int alto, int itemType) {
         super(x, y, ancho, alto);
-        dureza=rand.nextInt(5) + 0;
-        System.out.println(dureza);
+        dureza = rand.nextInt(5) + 0;
+
+        if (itemType == 1) {
+            itemColor = Color.GREEN;
+        }
+        if (itemType == 2) {
+            itemColor = Color.RED;
+        }
+
+        //Places an item of specified type inside the brick to fall when the brick is destroyed
+        item = new Item(x + (ancho / 4), y + (alto / 4), 50, 20, itemType);
     }
 
     public void draw(Graphics g) {
@@ -34,32 +46,34 @@ public class Bloques extends Estructura {
         }
 
     }
-    
 
+    public boolean caughtDisparo(Disparos i) {
+        if ((i.getY() == (y + ALTO_LADRILLO)) && (i.getX() <= x + ANCHO_LADRILLO - 28 && i.getX() + 28 >= x)) {
 
-    public void golpe(){
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public void golpe() {
         if (dureza != 4) {
             dureza--;
             Sonidos sound = new Sonidos("golpe");
-        
+
         }
         Sonidos sound = new Sonidos("golpe");
-        
-        
+
     }
-    
-    
 
     public int getDureza() {
         return dureza;
     }
-    
-    
+
     public void SetDureza(int dureza) {
 
         this.dureza = dureza;
     }
-    
-    
-    
+
 }

@@ -11,26 +11,34 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javazoom.jl.decoder.JavaLayerException;
 
 public final class Tablero extends JPanel implements Constantes, Runnable {
 
-    private AtomicBoolean isPaused = new AtomicBoolean(true);
+    private final AtomicBoolean isPaused = new AtomicBoolean(true);
+    private final ArrayList<Item> items = new ArrayList<Item>();
+    private int vidas = 2;
+    private int totalEventos;
+    int cosa = 1;
+    private int tempoDisparo;
+    private final ArrayList<Disparos> disparos = new ArrayList<Disparos>();
     private final Thread game;
     private final Plataforma plataforma;
     private final Bola bola;
@@ -40,16 +48,17 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     private static JLabel nombre2;
     private static JLabel puntuacion;
     private static JLabel vida;
-    private static TextArea textAreaResults;
+    private static JTextArea textAreaResults;
     private static Timer temporizador;
     Scores scores = new Scores();
     ScoreFile scoresFile = new ScoreFile();
     private static ManejaEjemploTimer manejador;
-    private int vidas = 2;
-    private int totalEventos;
+
     public final Menú menu;
     private Sonidos sound;
 
+    public boolean magnetic = true;
+    public boolean shoting = false;
     boolean derecha = true;
     boolean izquierda = false;
     boolean abajo = true;
@@ -81,8 +90,39 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             Y = Y + 28;
             X = 50;
             for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
-                bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO);
+                Random rand = new Random();
+                int itemType = rand.nextInt(11);
+                bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO, itemType);
                 X = X + 98;
+            }
+        }
+    }
+
+    public void addItem(Item i) {
+        items.add(i);
+    }
+
+    public void dropItems() {
+        for (int i = 0; i < items.size(); i++) {
+            Item tempItem = items.get(i);
+            tempItem.drop();
+            items.set(i, tempItem);
+        }
+    }
+
+    public void checkItemList() {
+        for (int i = 0; i < items.size(); i++) {
+            Item tempItem = items.get(i);
+            if (plataforma.caughtItem(tempItem)) {
+                if (tempItem.getType() == 3) {
+                    shoting = true;
+
+                } else if (tempItem.getType() == 2) {
+                    magnetic = true;
+                }
+                items.remove(i);
+            } else if (tempItem.getY() > ALTO_PANTALLA) {
+                items.remove(i);
             }
         }
     }
@@ -90,6 +130,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     public void recolocar() {
 
         if (vidas != 0) {
+            magnetic = true;
             JOptionPane.showMessageDialog(null, "¿Listo?");
             bola.setY(600);
             bola.setX(ANCHO_PANTALLA / 2);
@@ -100,6 +141,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             derecha = true;
             izquierda = false;
             abajo = false;
+            
             vidas--;
             vida.setText("Vidas: " + vidas);
 
@@ -143,17 +185,6 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 if (bloques[i][j].getDureza() == 0) {
 
                 } else if (abajo && izquierda) {                   //Aquí había un 60
-                    //if((bola.getY()+RADIO_BOLA == bloques[i][j].getY()) && (bola.getX() <= bloques[i][j].getX()+ANCHO_LADRILLO) && (bola.getX()+RADIO_BOLA > bloques[i][j].getX()))
-                    //if (abajo && izquierda){
-                    //arriba=true;izquierda=true;derecha=false;abajo=false;
-                    //bloques[i][j].golpe();
-                    //bola.setDirecciones(-1,-1); 
-                    //else if (abajo && derecha){
-                    //arriba=true;izquierda=false;derecha=true;abajo=false;
-                    //bloques[i][j].golpe();
-                    //bola.setDirecciones(1,-1);
-                    //}
-
                     if ((bola.getY() + RADIO_BOLA == bloques[i][j].getY()) && (bola.getX() <= bloques[i][j].getX() + ANCHO_LADRILLO) && (bola.getX() + RADIO_BOLA > bloques[i][j].getX())) {
                         arriba = true;
                         izquierda = true;
@@ -162,6 +193,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -174,6 +206,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -189,6 +222,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -201,6 +235,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -217,6 +252,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -230,6 +266,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -246,6 +283,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -258,6 +296,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                         bloques[i][j].golpe();
 
                         if (bloques[i][j].getDureza() == 0) {
+                            addItem(bloques[i][j].item);
                             menu.sumarPuntuacion();
                             puntuacion.setText("Puntuacion: " + Integer.toString(menu.getPuntuacion()));
                         }
@@ -389,14 +428,17 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         menu = new Menú();
 
         JOptionPane.showMessageDialog(null, "¡Bienvenido a Destructor!\n", "Destructor", 1);
-        JOptionPane.showMessageDialog(null, "Instrucciones:\n- Puedes mover la barra solo con el mouse\n"
+        JOptionPane.showMessageDialog(null, "Instrucciones:\n- Inicias el movimiento de la bola con un click derecho y puedes mover la barra solo con el mouse\n"
                 + "- Cada bloque que destruyas te dara 100 puntos\n- Cada nivel tiene un tiempo maximo de 300 segundos\n"
                 + "- Puedes elegir entre jugar los niveles pre-establecidos o elegir un nivel personalizado(es un archivo de "
-                + "texto que se encuentraen la carpeta base de este proyecto)", "Destructor", 1);
+                + "texto que se encuentraen la carpeta base de este proyecto)\n"
+                + "- Puedes pausar el juego con la tecla 'ESC' y quitar la puasa con la barra espaciadora\n"
+                + "- Se tienen dos poderes: un caño que dispara multiples misiles por unos segundos y un iman que pega la bola a la barra para que puedas apuntar donde quieras", "Destructor", 1);
         menu.setNombre(JOptionPane.showInputDialog(null, "Por favor digite su nombre: ", "Destructor", 1));
 
         super.setSize(ancho, alto);
         super.setLayout(null);
+        addMouseListener(new EscuchaMouse());
         addMouseMotionListener(new EscuchaMouse());
         this.addKeyListener(new BoardListener());
         setFocusable(true);
@@ -424,22 +466,22 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         vida = new JLabel("Vidas: 2");
         vida.setBounds(1072, 150, 1182, 160);
         vida.setFont(new Font("OCR A Std", Font.PLAIN, 14));
-        textAreaResults = new TextArea();
-        textAreaResults.setBounds(1062, 385, 1355, 500);
+        textAreaResults = new JTextArea();
+        textAreaResults.setBounds(1062, 420, 1355, 500);
         textAreaResults.setEditable(false);
         scoresFile.load(scores);
         textAreaResults.setText(scores.toString());
         textAreaResults.setFont(new Font("OCR A Std", Font.PLAIN, 14));
         manejador = new ManejaEjemploTimer();
         temporizador = new Timer(1000, manejador);
-
-        textAreaResults.setBackground(new Color(228, 241, 254, 1));
+        textAreaResults.setFont(new Font("OCR A Std", Font.PLAIN, 14));
+        textAreaResults.setOpaque(false);
+        textAreaResults.setForeground(Color.BLACK);
         super.add(tiempo);
         super.add(nombreJugador);
         super.add(nombre2);
         super.add(puntuacion);
         super.add(vida);
-        //super.add(resultados);
         super.add(textAreaResults);
 
         temporizador.start();
@@ -458,7 +500,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         scoresFile.load(scores);
         // Mostrar la lista inicial de máximas puntuaciones
         textAreaResults.setText(scores.toString());
-        textAreaResults.setFont(new Font("OCR A Std", Font.PLAIN, 14));
+        
 
         // Recoger datos de nueva puntuación desde la ventana
         // Crear una nueva puntuación
@@ -468,7 +510,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
         // Mostrar la lista de máximas puntuaciones
         textAreaResults.setText(scores.toString() + "\n");
-        textAreaResults.setFont(new Font("OCR A Std", Font.PLAIN, 14));
+        
         // Almacenar la lista de máximas puntuaciones
         scoresFile.save(scores);
     }
@@ -500,12 +542,13 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             case 2:
                 g.drawImage(FONDO2, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
                 g.drawImage(INFORMACION2, 1063, 0, 1360, 700, null);
-                textAreaResults.setBackground(new Color(158, 167, 227, 0));
+                
                 tiempo.setForeground(Color.WHITE);
                 nombreJugador.setForeground(Color.WHITE);
                 nombre2.setForeground(Color.white);
                 puntuacion.setForeground(Color.WHITE);
                 vida.setForeground(Color.WHITE);
+                textAreaResults.setForeground(Color.WHITE);
 
                 // Define rendering hint, font name, font style and font size
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -531,6 +574,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 nombre2.setForeground(Color.white);
                 puntuacion.setForeground(Color.WHITE);
                 vida.setForeground(Color.WHITE);
+                textAreaResults.setForeground(Color.WHITE);
 
                 // Define rendering hint, font name, font style and font size
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -548,6 +592,13 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 g2.drawString("HIGHSCORES", 1062, 380);
                 break;
         }
+
+        items.forEach((i) -> {
+            i.draw(g);
+        });
+        disparos.forEach((i) -> {
+            i.draw(g);
+        });
 
         bola.draw(g);
 
@@ -570,6 +621,22 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         }
     }
 
+    public void EstadoInicial() {
+
+        if ((bola.getY() + RADIO_BOLA == plataforma.getY()) && (bola.getX() <= plataforma.getX() + ANCHO_PLATAFORMA) && (bola.getX() + RADIO_BOLA > plataforma.getX())) {
+
+            while (magnetic == true) {
+
+                bola.setX(plataforma.getX() + ANCHO_PLATAFORMA / 2 - 10);
+                bola.setY(plataforma.getY() - RADIO_BOLA);
+                repaint();
+
+            }
+        }
+
+    }
+    
+    
     @Override
     public void run() {
         while (true) {
@@ -602,10 +669,17 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 }
 
                 verificarBloque();
+                checkDisparos();
                 try {
                     verificarPlataforma();
                 } catch (FileNotFoundException | JavaLayerException ex) {
                     Logger.getLogger(Tablero.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                dropItems();
+                checkItemList();
+                EstadoInicial();
+                for (Disparos j : disparos) {
+                    j.mover();
                 }
                 bola.mover();
                 repaint();
@@ -614,7 +688,33 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         }
     }
 
-    private class EscuchaMouse implements MouseMotionListener {
+    public void checkDisparos() {
+
+        for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
+
+            for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
+                for (int k = 0; k < disparos.size(); k++) {
+                    Disparos disparoTemp = disparos.get(k);
+                    if (bloques[i][j].caughtDisparo(disparoTemp)) {
+                        if (bloques[i][j].getDureza() != 0) {
+                            bloques[i][j].golpe();
+                            disparos.remove(k);
+                        } else
+                            if(bloques[i][j].getDureza()==0){
+                                menu.sumarPuntuacion();
+                                puntuacion.setText("Puntuacion: "+menu.getPuntuacion());
+                            }else
+                            if (disparoTemp.getY() < 0) {
+                            disparos.remove(k);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private class EscuchaMouse implements MouseMotionListener, MouseListener {
 
         @Override
         public void mouseDragged(MouseEvent e) {
@@ -626,8 +726,27 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
             if (e.getX() < ANCHO_PANTALLA - (ANCHO_PLATAFORMA / 2)) {
                 plataforma.setX(e.getX() - ANCHO_PLATAFORMA / 2);
             }
-            //   bola.setX(e.getX());
-            // bola.setY(e.getY());     
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            magnetic = false;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
         }
     }
 
@@ -644,6 +763,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 case KeyEvent.VK_SPACE:
 
                     start();
+                    break;
+                case KeyEvent.VK_S:
+                    if (shoting) {
+
+                        Disparos cosa = new Disparos(plataforma.getX() + (ANCHO_PLATAFORMA / 2) - 28, plataforma.getY(), 20, 20);
+                        disparos.add(cosa);
+
+                    }
                     break;
             }
         }
@@ -678,6 +805,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 }
             }
 
+            if (shoting == true) {
+                tempoDisparo++;
+                if (tempoDisparo == 2) {
+                    System.out.println(tempoDisparo);
+                    shoting = false;
+                    tempoDisparo=0;
+                }
+            }
         }
     }
 
@@ -702,8 +837,11 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                     Y = Y + 28;
                     X = 50;
                     linea = ficheroEntrada.readLine();
+                    int itemType;
                     for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
-                        bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO);
+                        Random rand = new Random();
+                        itemType = rand.nextInt(3) + 1;
+                        bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO, itemType);
                         bloques[i][j].SetDureza(linea.charAt(j) - '0');
                         X = X + 98;
                         //System.out.println( linea.charAt(j)- '0');
