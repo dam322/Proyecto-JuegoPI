@@ -38,7 +38,7 @@ public class Scores  {
         String result = "";
         for(int i=0; i<scoresList.size(); i++) {
             Jugador score = scoresList.get(i);
-            result += (i+1) + "º: " + score.getNombre() + ": " + score.getPuntaje() + "\n";
+            result += (i+1) + "º: " + score.getNombre() + ": " + score.getPuntaje() + "\n\n";
         }
         return result;
     }

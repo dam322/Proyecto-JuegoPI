@@ -21,8 +21,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -38,6 +40,8 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     private static JLabel nombre2;
     private static JLabel puntuacion;
     private static JLabel vida;
+    private static JTextField resultados;
+    private static JList listResultados;
     private static TextArea textAreaResults;
     private static Timer temporizador;
     Scores scores = new Scores();
@@ -343,12 +347,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 derecha = true;
                 izquierda = false;
                 bola.setDirecciones(1, 1);
+                sound = new Sonidos("hacha");
             } else if (bola.getX() + RADIO_BOLA >= ANCHO_PANTALLA) {
                 arriba = true;
                 izquierda = true;
                 derecha = false;
                 abajo = false;
                 bola.setDirecciones(-1, -1);
+                sound = new Sonidos("hacha");
             }
         } else if (izquierda && arriba) {
             if (bola.getY() <= 0) {
@@ -357,12 +363,14 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 abajo = true;
                 arriba = false;
                 bola.setDirecciones(-1, 1);
+                sound = new Sonidos("hacha");
             } else if (bola.getX() <= 0) {
                 derecha = true;
                 izquierda = false;
                 arriba = true;
                 abajo = false;
                 bola.setDirecciones(1, -1);
+                sound = new Sonidos("hacha");
             }
         } else if (izquierda && abajo) {
             if (bola.getX() <= 0) {
@@ -371,6 +379,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 arriba = false;
                 abajo = true;
                 bola.setDirecciones(1, 1);
+                sound = new Sonidos("hacha");
             }
 
         }
@@ -381,8 +390,12 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
         menu = new Menú();
 
-        JOptionPane.showMessageDialog(null, "¡Bienvenido!\n\nInformacion:\nCada bloque te concederá 100 puntos.\n", "Bricker Breaker", 1);
-        menu.setNombre(JOptionPane.showInputDialog(null, "Por favor digite su nombre: "));
+        JOptionPane.showMessageDialog(null, "¡Bienvenido a Destructor!\n", "Destructor", 1);
+        JOptionPane.showMessageDialog(null, "Instrucciones:\n- Puedes mover la barra solo con el mouse\n"
+                + "- Cada bloque que destruyas te dara 100 puntos\n- Cada nivel tiene un tiempo maximo de 300 segundos\n"
+                + "- Puedes elegir entre jugar los niveles pre-establecidos o elegir un nivel personalizado(es un archivo de "
+                + "texto que se encuentraen la carpeta base de este proyecto)", "Destructor", 1);
+        menu.setNombre(JOptionPane.showInputDialog(null, "Por favor digite su nombre: ", "Destructor", 1));
 
         super.setSize(ancho, alto);
         super.setLayout(null);
@@ -390,33 +403,56 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         this.addKeyListener(new BoardListener());
         setFocusable(true);
 
-        Personalizable();
-        //CrearBloques();
+        int op = JOptionPane.showConfirmDialog(null, "¿Desea cargar un nivel personalizado?");
+        if (op == JOptionPane.YES_NO_OPTION) {
+            Personalizable();
+
+        } else {
+            CrearBloques();
+        }
 
         tiempo = new JLabel("Tiempo: 0");
         tiempo.setBounds(1072, 80, 1172, 90);
+        tiempo.setFont(new Font("OCR A Std", Font.PLAIN, 14));
         nombreJugador = new JLabel("Jugador: ");
         nombreJugador.setBounds(1072, 50, 1162, 60);
-        nombre2 = new JLabel(menu.getNombre());
+        nombreJugador.setFont(new Font("OCR A Std", Font.PLAIN, 14));
+        nombre2 = new JLabel(" " + menu.getNombre());
         nombre2.setBounds(1142, 50, 1300, 60);
+        nombre2.setFont(new Font("OCR A Std", Font.PLAIN, 14));
         puntuacion = new JLabel("Puntuacion: 0");
-        puntuacion.setBounds(1072, 100, 1182, 120);
+        puntuacion.setBounds(1072, 110, 1182, 120);
+        puntuacion.setFont(new Font("OCR A Std", Font.PLAIN, 14));
         vida = new JLabel("Vidas: 2");
-        vida.setBounds(1072, 140, 1182, 160);
+        vida.setBounds(1072, 150, 1182, 160);
+        vida.setFont(new Font("OCR A Std", Font.PLAIN, 14));
+        
+        resultados = new JTextField();
+        resultados.setBounds(1062, 385, 1355, 500);
+        resultados.setEditable(false);
+        //resultados.setFocusable(false);
         textAreaResults = new TextArea();
         textAreaResults.setBounds(1062, 385, 1355, 500);
-        textAreaResults.setEditable(false);
+        textAreaResults.setEditable(false);       
         scoresFile.load(scores);
+        
+        //resultados.setText(scores.toString());
+        
+        //resultados.setOpaque(false);
         textAreaResults.setText(scores.toString());
+        
         manejador = new ManejaEjemploTimer();
         temporizador = new Timer(1000, manejador);
-
+        
+        textAreaResults.setBackground(new Color(228, 241, 254, 1));
         super.add(tiempo);
         super.add(nombreJugador);
         super.add(nombre2);
         super.add(puntuacion);
         super.add(vida);
+        //super.add(resultados);
         super.add(textAreaResults);
+        
         temporizador.start();
         plataforma = new Plataforma(240, 650, ANCHO_PLATAFORMA, ALTO_PLATAFORMA);
         bola = new Bola(290, 650 - RADIO_BOLA, RADIO_BOLA, RADIO_BOLA);
@@ -441,7 +477,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         scores.addScore(score);
 
         // Mostrar la lista de máximas puntuaciones
-        textAreaResults.setText(scores.toString());
+        textAreaResults.setText(scores.toString() + "\n");
         // Almacenar la lista de máximas puntuaciones
         scoresFile.save(scores);
     }
@@ -449,42 +485,86 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     @Override //Pintor
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g;
         switch (menu.getNivel()) {
             case 1:
                 g.drawImage(FONDO1, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
+                g.drawImage(INFORMACION1, 1063, 0, 1360, 700, null);
+                // Define rendering hint, font name, font style and font size
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setFont(new Font("OCR A Std", Font.BOLD, 40));
+                g2.setPaint(Color.BLACK);
+                
+                // Draw String
+                g2.drawString("DESTRUCTOR", 1065, 50);
+                // Define rendering hint, font name, font style and font size
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setFont(new Font("OCR A Std", Font.BOLD, 20));
+                g2.setPaint(Color.BLACK);
+
+                // Draw String
+                g2.drawString("HIGHSCORES", 1062, 380);
                 break;
             case 2:
                 g.drawImage(FONDO2, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
+                g.drawImage(INFORMACION2, 1063, 0, 1360, 700, null);
+                textAreaResults.setBackground(new Color(158, 167, 227, 0));
+                tiempo.setForeground(Color.WHITE);
+                nombreJugador.setForeground(Color.WHITE);
+                nombre2.setForeground(Color.white);
+                puntuacion.setForeground(Color.WHITE);
+                vida.setForeground(Color.WHITE);
+                
+                // Define rendering hint, font name, font style and font size
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setFont(new Font("OCR A Std", Font.BOLD, 40));
+                g2.setPaint(Color.ORANGE);
+
+                // Draw String
+                g2.drawString("DESTRUCTOR", 1065, 50);
+                // Define rendering hint, font name, font style and font size
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setFont(new Font("OCR A Std", Font.BOLD, 20));
+                g2.setPaint(Color.ORANGE);
+
+                // Draw String
+                g2.drawString("HIGHSCORES", 1062, 380);
                 break;
             default:
                 g.drawImage(FONDO3, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
+                g.drawImage(INFORMACION3, 1063, 0, 1360, 700, null);
+                //textAreaResults.setBackground(new Color(158, 167, 227, 0));
+                tiempo.setForeground(Color.WHITE);
+                nombreJugador.setForeground(Color.WHITE);
+                nombre2.setForeground(Color.white);
+                puntuacion.setForeground(Color.WHITE);
+                vida.setForeground(Color.WHITE);
+                
+                // Define rendering hint, font name, font style and font size
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setFont(new Font("OCR A Std", Font.BOLD, 40));
+                g2.setPaint(Color.ORANGE);
+
+                // Draw String
+                g2.drawString("DESTRUCTOR", 1065, 50);
+                // Define rendering hint, font name, font style and font size
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setFont(new Font("OCR A Std", Font.BOLD, 20));
+                g2.setPaint(Color.ORANGE);
+
+                // Draw String
+                g2.drawString("HIGHSCORES", 1062, 380);
                 break;
         }
 
         bola.draw(g);
-        g.drawImage(INFORMACION, 1063, 0, 1360, 700, null);
+
         g.drawLine(1062, 0, 1062, 700);
         g.drawLine(1062, 0, 1356, 0);
         g.drawLine(1356, 0, 1356, 700);
         g.drawLine(1062, 700, 1356, 700);
         g.drawLine(1062, 350, 1356, 350);
-
-        Graphics2D g2 = (Graphics2D) g;
-
-        // Define rendering hint, font name, font style and font size
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setFont(new Font("Segoe Script", Font.BOLD + Font.ITALIC, 40));
-        g2.setPaint(Color.ORANGE);
-
-        // Draw String
-        g2.drawString("CFMR", 1105, 50);
-        // Define rendering hint, font name, font style and font size
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setFont(new Font("Segoe Script", Font.BOLD + Font.ITALIC, 20));
-        g2.setPaint(Color.ORANGE);
-
-        // Draw String
-        g2.drawString("HIGHSCORES", 1062, 380);
 
         plataforma.draw(g);
         for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
@@ -505,6 +585,17 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
             if (IsComplete(bloques)) {
                 menu.siguienteNivel();
+                if(menu.getNivel()>3){
+                    temporizador.stop();
+                    JOptionPane.showMessageDialog(null, "Felicidades ha ganado los tres niveles de este juego", "Destructor",1);
+                    System.exit(0);
+                                        
+                }
+                temporizador.stop();
+                totalEventos = 0;
+                tiempo.setText("Tiempo: 0");                
+                JOptionPane.showMessageDialog(null, "Nivel "+menu.getNivel()+", listo?", "Destructor",1); 
+                temporizador.restart();
                 CrearBloques();
             }
             for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
@@ -601,7 +692,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
     public void Personalizable() {
         String nombre;
-        nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo") + ".txt";
+        nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo", "Destructor",1) + ".txt";
 
         if (!(new File(nombre)).exists()) {
             System.out.println("No he encontrado " + nombre);
@@ -611,24 +702,24 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         System.out.println(
                 "Leyendo fichero de texto...");
         try {
-            BufferedReader ficheroEntrada = new BufferedReader(new FileReader(new File(nombre)));
-            String linea = null;
+            try (BufferedReader ficheroEntrada = new BufferedReader(new FileReader(new File(nombre)))) {
+                String linea;
 
-            int X;
-            int Y = 25;
-            for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
-                Y = Y + 28;
-                X = 50;
-                linea = ficheroEntrada.readLine();
-                for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
-                    bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO);
-                    bloques[i][j].SetDureza(linea.charAt(j) - '0');
-                    X = X + 98;
-                    //System.out.println( linea.charAt(j)- '0');
+                int X;
+                int Y = 25;
+                for (int i = 0; i < CANTIDAD_LADRILLOS_Y; i++) {
+                    Y = Y + 28;
+                    X = 50;
+                    linea = ficheroEntrada.readLine();
+                    for (int j = 0; j < CANTIDAD_LADRILLOS_X; j++) {
+                        bloques[i][j] = new Bloques(X, Y, ANCHO_LADRILLO, ALTO_LADRILLO);
+                        bloques[i][j].SetDureza(linea.charAt(j) - '0');
+                        X = X + 98;
+                        //System.out.println( linea.charAt(j)- '0');
+                    }
+
                 }
-
             }
-            ficheroEntrada.close();
         } catch (IOException errorDeFichero) {
             System.out.println(
                     "Ha habido problemas: "

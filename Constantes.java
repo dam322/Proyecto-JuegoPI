@@ -6,10 +6,10 @@ import javax.swing.ImageIcon;
 public interface Constantes {
 
     //Tiempos de espera:
-    public static final int SLEEP_1 = 1;
-    public static final int SLEEP_2 = 2;
-    public static final int SLEEP_3 = 3;
-    public static final int SLEEP_4 = 4;
+    public static final int SLEEP_1 = 3;
+    public static final int SLEEP_2 = 4;
+    public static final int SLEEP_3 = 5;
+    public static final int SLEEP_4 = 6;
 
     //Imágenes
     public static final Image LADRILLO3 = new ImageIcon("dureza3.png").getImage();
@@ -31,8 +31,10 @@ public interface Constantes {
     public static final Image FONDO3 = new ImageIcon("FondoNivel3.png").getImage();
     // public static final Image PLATAFORMA = new ImageIcon("troncazo.png").getImage();
     public static final Image PLATAFORMA = new ImageIcon("barra.jpg").getImage();
-    public static final Image INFORMACION = new ImageIcon("fondoverde.jpg").getImage();
-
+    public static final Image INFORMACION1 = new ImageIcon("informacion1.jpg").getImage();
+    public static final Image INFORMACION2 = new ImageIcon("informacion2.jpg").getImage();
+    public static final Image INFORMACION3 = new ImageIcon("informacion3.jpg").getImage();
+    
     public static final int ANCHO_PANTALLA = 1061;
     public static final int ANCHO_PANTALLA2 = 1366;
     public static final int ALTO_PANTALLA = 748;
