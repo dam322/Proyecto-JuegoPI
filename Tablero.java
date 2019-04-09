@@ -41,7 +41,6 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     private static JLabel puntuacion;
     private static JLabel vida;
     private static JTextField resultados;
-    private static JList listResultados;
     private static TextArea textAreaResults;
     private static Timer temporizador;
     Scores scores = new Scores();
@@ -426,24 +425,15 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         vida = new JLabel("Vidas: 2");
         vida.setBounds(1072, 150, 1182, 160);
         vida.setFont(new Font("OCR A Std", Font.PLAIN, 14));
-        
-        resultados = new JTextField();
-        resultados.setBounds(1062, 385, 1355, 500);
-        resultados.setEditable(false);
-        //resultados.setFocusable(false);
         textAreaResults = new TextArea();
         textAreaResults.setBounds(1062, 385, 1355, 500);
-        textAreaResults.setEditable(false);       
+        textAreaResults.setEditable(false);
         scoresFile.load(scores);
-        
-        //resultados.setText(scores.toString());
-        
-        //resultados.setOpaque(false);
         textAreaResults.setText(scores.toString());
-        
+        textAreaResults.setFont(new Font("OCR A Std", Font.PLAIN, 14));
         manejador = new ManejaEjemploTimer();
         temporizador = new Timer(1000, manejador);
-        
+
         textAreaResults.setBackground(new Color(228, 241, 254, 1));
         super.add(tiempo);
         super.add(nombreJugador);
@@ -452,7 +442,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         super.add(vida);
         //super.add(resultados);
         super.add(textAreaResults);
-        
+
         temporizador.start();
         plataforma = new Plataforma(240, 650, ANCHO_PLATAFORMA, ALTO_PLATAFORMA);
         bola = new Bola(290, 650 - RADIO_BOLA, RADIO_BOLA, RADIO_BOLA);
@@ -469,6 +459,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         scoresFile.load(scores);
         // Mostrar la lista inicial de máximas puntuaciones
         textAreaResults.setText(scores.toString());
+        textAreaResults.setFont(new Font("OCR A Std", Font.PLAIN, 14));
 
         // Recoger datos de nueva puntuación desde la ventana
         // Crear una nueva puntuación
@@ -478,6 +469,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
         // Mostrar la lista de máximas puntuaciones
         textAreaResults.setText(scores.toString() + "\n");
+        textAreaResults.setFont(new Font("OCR A Std", Font.PLAIN, 14));
         // Almacenar la lista de máximas puntuaciones
         scoresFile.save(scores);
     }
@@ -495,7 +487,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setFont(new Font("OCR A Std", Font.BOLD, 40));
                 g2.setPaint(Color.BLACK);
-                
+
                 // Draw String
                 g2.drawString("DESTRUCTOR", 1065, 50);
                 // Define rendering hint, font name, font style and font size
@@ -515,7 +507,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 nombre2.setForeground(Color.white);
                 puntuacion.setForeground(Color.WHITE);
                 vida.setForeground(Color.WHITE);
-                
+
                 // Define rendering hint, font name, font style and font size
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setFont(new Font("OCR A Std", Font.BOLD, 40));
@@ -540,7 +532,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 nombre2.setForeground(Color.white);
                 puntuacion.setForeground(Color.WHITE);
                 vida.setForeground(Color.WHITE);
-                
+
                 // Define rendering hint, font name, font style and font size
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setFont(new Font("OCR A Std", Font.BOLD, 40));
@@ -585,16 +577,16 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
             if (IsComplete(bloques)) {
                 menu.siguienteNivel();
-                if(menu.getNivel()>3){
+                if (menu.getNivel() > 3) {
                     temporizador.stop();
-                    JOptionPane.showMessageDialog(null, "Felicidades ha ganado los tres niveles de este juego", "Destructor",1);
+                    JOptionPane.showMessageDialog(null, "Felicidades ha ganado los tres niveles de este juego", "Destructor", 1);
                     System.exit(0);
-                                        
+
                 }
                 temporizador.stop();
                 totalEventos = 0;
-                tiempo.setText("Tiempo: 0");                
-                JOptionPane.showMessageDialog(null, "Nivel "+menu.getNivel()+", listo?", "Destructor",1); 
+                tiempo.setText("Tiempo: 0");
+                JOptionPane.showMessageDialog(null, "Nivel " + menu.getNivel() + ", listo?", "Destructor", 1);
                 temporizador.restart();
                 CrearBloques();
             }
@@ -692,7 +684,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
     public void Personalizable() {
         String nombre;
-        nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo", "Destructor",1) + ".txt";
+        nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo", "Destructor", 1) + ".txt";
 
         if (!(new File(nombre)).exists()) {
             System.out.println("No he encontrado " + nombre);
