@@ -40,7 +40,6 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     private static JLabel nombre2;
     private static JLabel puntuacion;
     private static JLabel vida;
-    private static JTextField resultados;
     private static TextArea textAreaResults;
     private static Timer temporizador;
     Scores scores = new Scores();
