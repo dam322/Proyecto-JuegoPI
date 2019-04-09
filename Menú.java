@@ -4,7 +4,7 @@ public class Menú {
     
     private int puntuacion=0;
     private String nombre;
-    private int nivel=3;
+    private int nivel=1;
     
     public Menú() {
     
