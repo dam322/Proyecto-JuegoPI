@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -37,6 +36,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     private int vidas = 2;
     private int totalEventos;
     int cosa = 1;
+    int velocidad = 3;
     private int tempoDisparo;
     private final ArrayList<Disparos> disparos = new ArrayList<Disparos>();
     private final Thread game;
@@ -130,7 +130,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     public void recolocar() {
 
         if (vidas != 0) {
-            magnetic = true;
+            
             JOptionPane.showMessageDialog(null, "¿Listo?");
             bola.setY(600);
             bola.setX(ANCHO_PANTALLA / 2);
@@ -435,7 +435,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 + "- Puedes pausar el juego con la tecla 'ESC' y quitar la puasa con la barra espaciadora\n"
                 + "- Se tienen dos poderes: un caño que dispara multiples misiles por unos segundos al presionar la tecla 'S' y un iman que pega la bola a la barra para que puedas apuntar donde quieras", "Destructor", 1);
         menu.setNombre(JOptionPane.showInputDialog(null, "Por favor digite su nombre: ", "Destructor", 1));
-
+        
         super.setSize(ancho, alto);
         super.setLayout(null);
         addMouseListener(new EscuchaMouse());
@@ -447,8 +447,13 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
         if (op == JOptionPane.YES_NO_OPTION) {
             Personalizable();
 
-        } else {
-            CrearBloques();
+        } else{
+            if(op == JOptionPane.NO_OPTION){
+                CrearBloques();
+            }else{
+                System.exit(0);
+            }
+            
         }
 
         tiempo = new JLabel("Tiempo: 0");
@@ -564,6 +569,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
                 // Draw String
                 g2.drawString("HIGHSCORES", 1062, 380);
+                
                 break;
             default:
                 g.drawImage(FONDO3, 0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, null);
@@ -643,6 +649,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
 
             if (IsComplete(bloques)) {
                 menu.siguienteNivel();
+                velocidad --;
                 if (menu.getNivel() > 3) {
                     temporizador.stop();
                     JOptionPane.showMessageDialog(null, "Felicidades ha ganado los tres niveles de este juego", "Destructor", 1);
@@ -681,7 +688,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 for (Disparos j : disparos) {
                     j.mover();
                 }
-                bola.mover();
+                bola.mover(velocidad);
                 repaint();
             }
 
@@ -819,10 +826,11 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
     public void Personalizable() {
         String nombre;
         nombre = JOptionPane.showInputDialog(null, "Digite el nombre del archivo", "Destructor", 1) + ".txt";
-
+        
         if (!(new File(nombre)).exists()) {
             System.out.println("No he encontrado " + nombre);
-            return;
+            JOptionPane.showMessageDialog(null, "No se ha encontrado el archivo, por favor creelo en la carpeta base de este proyecto o escriba bien el nombre", "Erro", JOptionPane.WARNING_MESSAGE);
+            Personalizable();
         }
 
         System.out.println(

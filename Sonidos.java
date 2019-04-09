@@ -31,14 +31,14 @@ public class Sonidos implements Runnable{
     
     @Override
     public void run() {//SE CARGA EL ARCHIVO MP3 CUANDO ARRANCA EL HILO
-        System.out.println("1.Run");
+        
         //SE UTILIZA LA LIBRERIA Y EL METODO PLAY DEL PLAYER
         try {
-            System.out.println("2.try");
+            
             FileInputStream fis;
             Player player;
             fis = new FileInputStream(tipoSonido+".mp3");
-            System.out.println("Audio " + fis.toString());
+            
             BufferedInputStream bis = new BufferedInputStream(fis);
             player = new Player(bis);
             player.play();
@@ -50,7 +50,7 @@ public class Sonidos implements Runnable{
     }
 
     public void start() {
-        System.out.println("3.start");
+        
         if (hilo == null) {
             hilo = new Thread(this);
             hilo.start();

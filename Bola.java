@@ -10,13 +10,13 @@ public class Bola extends Estructura{
         super(x, y, ancho, alto);
     }
     
-    public void mover (){
+    public void mover (int velocidad){
             try{
               
                 x=x+direccionX;
                 y=y+direccionY;
                
-        Thread.sleep(SLEEP_1);
+        Thread.sleep(velocidad);
      }catch(InterruptedException e){}
 
                 contador++;
