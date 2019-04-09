@@ -433,7 +433,7 @@ public final class Tablero extends JPanel implements Constantes, Runnable {
                 + "- Puedes elegir entre jugar los niveles pre-establecidos o elegir un nivel personalizado(es un archivo de "
                 + "texto que se encuentraen la carpeta base de este proyecto)\n"
                 + "- Puedes pausar el juego con la tecla 'ESC' y quitar la puasa con la barra espaciadora\n"
-                + "- Se tienen dos poderes: un caño que dispara multiples misiles por unos segundos y un iman que pega la bola a la barra para que puedas apuntar donde quieras", "Destructor", 1);
+                + "- Se tienen dos poderes: un caño que dispara multiples misiles por unos segundos al presionar la tecla 'S' y un iman que pega la bola a la barra para que puedas apuntar donde quieras", "Destructor", 1);
         menu.setNombre(JOptionPane.showInputDialog(null, "Por favor digite su nombre: ", "Destructor", 1));
 
         super.setSize(ancho, alto);
